@@ -3,21 +3,28 @@ const FS = require('fs')
 const VueServerRenderer = require('vue-server-renderer')
 const Webpack = require('webpack')
 
-const [
-  webpackConfigWeb, 
-  webpackConfigServer
-] = require('./webpack.config')
+const webpackConfig = require('./webpack.config')
 
 const app = Express()
-const env = process.env.NODE_ENV
 
-const renderer = VueServerRenderer.createBundleRenderer(
+const isProduction = process.env.NODE_ENV === 'production'
+
+const generateRenderer = () => VueServerRenderer.createBundleRenderer(
   JSON.parse(require('fs').readFileSync('./public/vue-ssr-server-bundle.json', 'utf-8')),
   { 
     clientManifest: JSON.parse(require('fs').readFileSync('./public/vue-ssr-client-manifest.json', 'utf-8')),
     template: require('fs').readFileSync('./index.template.html', 'utf-8')
   }
 )
+
+let renderer = generateRenderer()
+
+if (!isProduction) {
+  Webpack(webpackConfig).watch({}, (err, stats) => { 
+    console.info(`Regenerated: ${Object.keys(stats.stats[0].compilation.assets)}`)
+    renderer = generateRenderer()
+  })
+}
 
 app.use('/public', Express.static('public'))
 
