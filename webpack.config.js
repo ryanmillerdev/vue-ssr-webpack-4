@@ -110,11 +110,20 @@ const base = {
 const web = WebpackMerge(base, {
   target: 'web',
   devtool: isProduction ? false : 'source-map',
-  entry: '@/entry-web.js',
+  entry: ['@/entry-web.js'],
   plugins: [
     new VueSSRClientPlugin()
   ]
 })
+
+// In development, we want to instantly update the client if we make a change to the Vue app.
+// The webpack-hot-middleware plugin let's us do just that, and here we add the necessary elements
+// to the above `web` config if we're running in development mode.
+if (!isProduction) {
+  web.entry.unshift('webpack-hot-middleware/client?quiet=true')
+  web.plugins.push(new Webpack.HotModuleReplacementPlugin())
+  web.plugins.push(new Webpack.NoEmitOnErrorsPlugin())
+}
 
 // ****************************************
 // Server-Side Webpack Configuration

@@ -1,32 +1,52 @@
 const Express = require('express')
-const FS = require('fs')
+const fs = require('fs')
+const path = require('path')
 const VueServerRenderer = require('vue-server-renderer')
 const Webpack = require('webpack')
+const WebpackHotMiddleware = require('webpack-hot-middleware')
 
-const webpackConfig = require('./webpack.config')
+const [ webpackConfigServer, webpackConfigWeb ] = require('./webpack.config')
 
 const app = Express()
 
 const isProduction = process.env.NODE_ENV === 'production'
 
-const generateRenderer = () => VueServerRenderer.createBundleRenderer(
-  JSON.parse(require('fs').readFileSync('./public/vue-ssr-server-bundle.json', 'utf-8')),
-  { 
-    clientManifest: JSON.parse(require('fs').readFileSync('./public/vue-ssr-client-manifest.json', 'utf-8')),
-    template: require('fs').readFileSync('./index.template.html', 'utf-8')
-  }
-)
+const generateRenderer = () => {
+  const serverBundlePath = path.resolve(__dirname, './public/vue-ssr-server-bundle.json')
+  const clientBundlePath = path.resolve(__dirname, './public/vue-ssr-client-manifest.json')
+  const templatePath = path.resolve(__dirname, './index.template.html')
+
+  return VueServerRenderer.createBundleRenderer(
+    JSON.parse(fs.readFileSync(serverBundlePath, 'utf-8')),
+    { 
+      clientManifest: JSON.parse(fs.readFileSync(clientBundlePath, 'utf-8')),
+      template: fs.readFileSync(templatePath, 'utf-8')
+    }
+  )
+}
 
 let renderer = generateRenderer()
 
 if (!isProduction) {
-  Webpack(webpackConfig).watch({}, (err, stats) => { 
-    console.info(`Regenerated: ${Object.keys(stats.stats[0].compilation.assets)}`)
+  const webCompiler = Webpack(webpackConfigWeb)
+  const serverCompiler = Webpack(webpackConfigServer)
+
+  app.use(WebpackHotMiddleware(webCompiler, { heartbeat: 1000, log: false }))
+
+  webCompiler.watch({}, (err, stats) => {
+    console.info(`*** WEB COMPILATION COMPLETE ***`)
+    console.info(Object.keys(stats.compilation.assets))
+    renderer = generateRenderer()
+  })
+
+  serverCompiler.watch({}, (err, stats) => {
+    console.info(`*** SERVER COMPILATION COMPLETE ***`)
+    console.info(Object.keys(stats.compilation.assets))
     renderer = generateRenderer()
   })
 }
 
-app.use('/public', Express.static('public'))
+app.use('/public/', Express.static('public'))
 
 app.get('*', (req, res) => { 
   renderer.renderToStream({ url: req.url }).on('error', (err) => {
