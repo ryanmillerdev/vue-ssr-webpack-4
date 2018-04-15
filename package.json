@@ -6,7 +6,8 @@
   "dependencies": {
     "vue": "^2.5.16",
     "vue-router": "^3.0.1",
-    "vue-server-renderer": "^2.5.16"
+    "vue-server-renderer": "^2.5.16",
+    "webpack-dev-middleware": "^3.1.2"
   },
   "devDependencies": {
     "css-loader": "^0.28.11",
