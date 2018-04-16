@@ -135,7 +135,7 @@ const server =  WebpackMerge(base, {
   // Here we whitelist only those Node.js modules which are necessary for rendering our app.
   // Including any other modules in the server bundle slows build time and is unneccessary.
   externals: WebpackNodeExternals({
-    whitelist: ['vue', 'vue-router']
+    whitelist: ['isomorphic-fetch', 'vue', 'vue-router', 'vuex']
   }),
   output: {
     // Result in the compiled module being exposed as `module.exports = ...`.
