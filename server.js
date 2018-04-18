@@ -134,6 +134,12 @@ if (isProduction) {
   // place.
   serverCompiler.outputFileSystem = devMiddleware.fileSystem
 
+  // Just a convenience hook for showing nice console messages that refresh the terminal.
+  webCompiler.hooks.beforeCompile.tap('Console Rest', () => {
+    process.stdout.write('\033c ');
+    console.info('Recompiling assets...')
+  })
+
   // The webpack-dev-middleware will automatically build the assets for our web compiler.
   // Thus, we don't need to call `watch` on the above webCompiler. We do, however, need to 
   // call watch our serverCompiler to ensure that both the server and client stay in sync.
@@ -141,6 +147,7 @@ if (isProduction) {
   // We use the `afterEmit` hook here to ensure that, when we call our server compiler, all
   // client-side resources will be ready to load into the bundle renderer.
   webCompiler.hooks.afterEmit.tap('Web Compilation', (stats) => {
+    process.stdout.write('\033c ');
     console.time('\nCompilation Time')
 
     console.info(`*** WEB COMPILATION COMPLETE ***\n`)

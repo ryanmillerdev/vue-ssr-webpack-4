@@ -120,7 +120,7 @@ const web = WebpackMerge(base, {
 // The webpack-hot-middleware plugin let's us do just that, and here we add the necessary elements
 // to the above `web` config if we're running in development mode.
 if (!isProduction) {
-  web.entry.unshift('webpack-hot-middleware/client?quiet=true')
+  web.entry.unshift('webpack-hot-middleware/client?quiet=true&reload=true')
   web.plugins.push(new Webpack.HotModuleReplacementPlugin())
   web.plugins.push(new Webpack.NoEmitOnErrorsPlugin())
 }

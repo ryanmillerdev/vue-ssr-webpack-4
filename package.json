@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "author": "Ryan Miller (@andryanmiller)",
   "license": "MIT",
+  "engines": {
+    "node": "8.11.1"
+  },
   "dependencies": {
     "isomorphic-fetch": "^2.2.1",
     "vue": "^2.5.16",

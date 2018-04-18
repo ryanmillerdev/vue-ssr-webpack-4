@@ -17,13 +17,13 @@ or
 
 `npm install`
 
-### Build
+### Running in Development
 
-Run `webpack` to generate both the server and client-side bundles.
+Simply run `npm start` to fire up a development server. This will automatically compile necessary assets in-memory and comes with HMR.
 
-### Serve
+### Running in Production
 
-Run `npm start` to start a local server listening on port `8070`.
+Run `webpack` prior to `npm start` in order to launch a server into production, as production configuration requires that bundles be available immediately at init.
 
 ## Deep Dive
 
