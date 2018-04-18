@@ -54,18 +54,31 @@ const base = {
       test: /\.vue$/,
       loader: 'vue-loader'
     }, {
-     // Per goal #1 above, I wanted to be able to extract my CSS file separately. The prescribed
+      // Per goal #1 above, I wanted to be able to extract my CSS file separately. The prescribed
       // means of doing this (in Vue Loader 14) is via the ExtractTextWebpackPlugin: 
       // (https://vue-loader.vuejs.org/en/configurations/extract-css.html)
       // 
       // In a sad turn of fate, ExtractTextWebpackPlugin did not gracefully make the transition 
       // to Webpack 4. Vue Loader 15 adds support for alternative CSS extractors, and you can
-      // read more here: https://github.com/vuejs/vue-loader/issues/1220 test: /\.css$/,
+      // read more here: https://github.com/vuejs/vue-loader/issues/1220.
+      //
+      // And to further complicate things, MiniCssExtractPlugin does not support HMR (yet), and so 
+      // to work around that we use `vue-style-loader` and `css-loader` in development, which does
+      // support HMR and injects styles directly into the <head> via <style> tags versus generating
+      // a hashed CSS file. 
+      //
+      // Why `vue-style-loader` and not `style-loader`, the which is fully support by the Webpack
+      // community? The core issue is that the former is isomorphic while the latter isn't, meaning
+      // that if we try to use `style-loader` on the server then we get mysterious errors, such as
+      // `window is not defined`.  Read more here: https://github.com/vuejs/vue-style-loader.
       test: /\.css$/,
-      use: [
+      use: isProduction ? [
         MiniCssExtractPlugin.loader,
         'css-loader'
-      ]
+       ] : [
+        'vue-style-loader',
+        'css-loader'
+       ]    
     }, {
       // File loader simply takes a file a puts it somewhere else with (optionally a new name and 
       // cache-busting hash).
@@ -82,11 +95,6 @@ const base = {
     filename: "[name].[hash:8].js"
   },
   plugins: [
-    // The MiniCssExtractPlugin allows us to take the CSS contained in our *.vue files
-    // and store them in a separate file.
-    new MiniCssExtractPlugin({
-      filename: '[name].[hash:8].css'
-    }),
     new VueLoaderPlugin()
   ],
   resolve: {
@@ -101,6 +109,14 @@ const base = {
     // Allows Webpack to resolve *.vue files, which otherwise it wouldn't do.
     extensions: ['.js', '.vue']
   }
+}
+
+if (isProduction) {
+  // See the config of the CSS loader in the base config above for the reason this is added 
+  // in production.
+  base.plugins.unshift(new MiniCssExtractPlugin({
+    filename: '[name].[hash:8].css'
+  }))  
 }
 
 // ****************************************
@@ -123,7 +139,7 @@ if (!isProduction) {
   web.entry.unshift('webpack-hot-middleware/client?quiet=true&reload=true')
   web.plugins.push(new Webpack.HotModuleReplacementPlugin())
   web.plugins.push(new Webpack.NoEmitOnErrorsPlugin())
-}
+} 
 
 // ****************************************
 // Server-Side Webpack Configuration

@@ -5,6 +5,10 @@
 </template>
 
 <style>
+h1, p, a {
+  color: palevioletred;
+}
+
 .container {
   position: absolute;
   top: 0;
@@ -16,10 +20,10 @@
   align-items: center;
   justify-content: center;
   background-color: papayawhip;
+  text-align: center;
 }
 
 h1 {
   margin-bottom: 20px;
-  color: palevioletred;
 }
 </style>

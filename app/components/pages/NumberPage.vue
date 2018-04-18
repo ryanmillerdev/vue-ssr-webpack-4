@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <h1>Fact about the number: {{ $route.params.number }}</h1>
     <p v-if="fact">{{ fact }}</p>
     <p v-if="!fact">Loading fact...</p>
