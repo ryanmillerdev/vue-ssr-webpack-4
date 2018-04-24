@@ -74,7 +74,8 @@ const base = {
       // that if we try to use `style-loader` on the server then we get mysterious errors, such as
       // `window is not defined`.  Read more here: https://github.com/vuejs/vue-style-loader.
       test: /\.css$/,
-      loader: 'css-loader'
+      use: ['vue-style-loader',
+        'css-loader']
     },         {
       test: /\.html$/,
       exclude: /node_modules/,
@@ -131,7 +132,7 @@ const web = WebpackMerge(base, {
 // The webpack-hot-middleware plugin let's us do just that, and here we add the necessary elements
 // to the above `web` config if we're running in development mode.
 if (!isProduction) {
-  web.entry.unshift('webpack-hot-middleware/client?quiet=true&reload=true')
+  web.entry.unshift('webpack-hot-middleware/client?quiet=true')
   web.plugins.push(new Webpack.HotModuleReplacementPlugin())
   web.plugins.push(new Webpack.NoEmitOnErrorsPlugin())
 }
