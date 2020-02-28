@@ -9,15 +9,15 @@ import store from '@/store'
 Vue.use(VueRouter)
 
 export const createApp = () => {
-  const router = new VueRouter({ 
+  const router = new VueRouter({
     mode: 'history',
-    routes 
+    routes
   })
 
   const app = new Vue({
     router,
-    render: h => h(App),
-    store
+    store,
+    render: h => h(App)
   })
 
   return { app, router, store }

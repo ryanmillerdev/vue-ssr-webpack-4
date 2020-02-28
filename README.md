@@ -1,4 +1,4 @@
-Vue SSR With Webpack 4 & Vue Loader 15
+Vue 2 SSR With Koa 2, Webpack 4 & Vue Loader 15
 ======================================
 
 This repo serves as an example for those attempting to utilize Vue server-server side rendering (SSR) with the latest (at the time of writing) versions of Webpack and Vue Loader. 
