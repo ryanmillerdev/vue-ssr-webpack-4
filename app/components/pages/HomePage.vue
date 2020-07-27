@@ -1,6 +1,6 @@
 <template>
 <div class="container">
-  <h1>{{ message }}</h1> 
+  <h1>{{ message }}</h1>
   <img src="~@/assets/reindeer-power.gif" width="200" />
   <div>
     <router-link :to="{name: 'Name', params: { name: 'foo' }}">Go to Name Page</router-link>
@@ -19,6 +19,6 @@ export default {
     return {
       message: 'Hello world!'
     }
-  } 
+  }
 }
 </script>
