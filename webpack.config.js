@@ -85,7 +85,8 @@ const base = {
       test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
       loader: 'file-loader',
       options: {
-        name: 'images/[name].[hash:8].[ext]'
+        name: 'images/[name].[hash:8].[ext]',
+        esModule: false
       }
     }]
   },
